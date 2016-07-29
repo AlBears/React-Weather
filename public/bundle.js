@@ -24874,26 +24874,42 @@
 
 		getInitialState: function getInitialState() {
 			return {
-				location: "Miami",
-				temp: 88
+				isLoading: false
 			};
 		},
 		handleSearch: function handleSearch(location) {
 			var that = this;
+			this.setState({ isLoading: true });
 			openWeatherMap.getTemp(location).then(function (temp) {
 				that.setState({
 					location: location,
-					temp: temp
+					temp: temp,
+					isLoading: false
 				});
 			}, function (errorMessage) {
+				that.setState({ isLoading: false });
 				alert(errorMessage);
 			});
 		},
 		render: function render() {
 			var _state = this.state;
+			var isLoading = _state.isLoading;
 			var temp = _state.temp;
 			var location = _state.location;
 
+
+			function renderMessage() {
+				if (isLoading) {
+
+					return React.createElement(
+						'h3',
+						null,
+						'Fetching weather...'
+					);
+				} else if (temp && location) {
+					return React.createElement(WeatherMessage, { temp: temp, location: location });
+				}
+			}
 			return React.createElement(
 				'div',
 				null,
@@ -24903,7 +24919,7 @@
 					'Weather Component'
 				),
 				React.createElement(WeatherForm, { onSearch: this.handleSearch }),
-				React.createElement(WeatherMessage, { temp: temp, location: location })
+				renderMessage()
 			);
 		}
 	});
@@ -24993,9 +25009,7 @@
 
 	var axios = __webpack_require__(222);
 
-	var OPEN_WEATHER_MAP_URL = 'http://api.openweathermap.org/data/2.5/weather?appid=8a26193cbe908cfafdb4b23efd6dc489&units=metric';
-
-	//8a26193cbe908cfafdb4b23efd6dc489
+	var OPEN_WEATHER_MAP_URL = 'http://api.openweathermap.org/data/2.5/weather?appid=&units=metric';
 
 	module.exports = {
 		getTemp: function getTemp(location) {
